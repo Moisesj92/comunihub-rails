@@ -1,0 +1,13 @@
+development:
+  :concurrency: 5
+  :queues:
+    - default
+  :redis:
+    url: <%= ENV['REDIS_URL'] %>
+
+production:
+  :concurrency: 10
+  :queues:
+    - default
+  :redis:
+    url: <%= ENV['REDIS_URL'] %>
