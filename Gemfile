@@ -48,3 +48,5 @@ end
 
 # Additional gems for project
 gem "sidekiq", "~> 7.1"
+gem "devise", "~> 4.9"
+gem "devise-jwt", "~> 0.11.0"
