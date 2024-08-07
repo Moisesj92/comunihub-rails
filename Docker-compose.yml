@@ -1,59 +1,29 @@
-version: "3.4"
-
 services:
-  app:
+  web:
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
       - database
-      - redis
+    env_file: .env
     ports:
       - '3000:3000'
     volumes:
-      - '.:/app'
+      - '.:/rails'
       - 'app-gems:/usr/local/bundle/gems'
-    env_file: .env
-    environment:
-      RAILS_ENV: '${RAILS_ENV}'
-    command: '/bin/bash -c  "rm -f /app/tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0"'
 
   database:
-    image: 'postgres:15.2'
+    image: 'postgres:16.3'
     env_file: .env
     environment:
-      POSTGRES_PASSWORD: '${DATABASE_PASSWORD}'
       POSTGRES_USER: '${DATABASE_USER}'
+      POSTGRES_PASSWORD: '${DATABASE_PASSWORD}'
       POSTGRES_DB: '${DATABASE_NAME}'
     ports:
       - '5432:5432'
     volumes:
       - 'app-postgres:/var/lib/postgresql/data'
 
-  redis:
-    image: 'redis:7.0.12'
-    ports:
-      - '6379:6379'
-    volumes:
-      - 'app-redis:/var/lib/redis/data'
-
-  sidekiq:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      - app
-      - database
-      - redis
-    volumes:
-      - '.:/app'
-      - 'app-gems:/usr/local/bundle/gems'
-    env_file: .env
-    environment:
-      RAILS_ENV: '${RAILS_ENV}'
-    command: 'bundle exec sidekiq -C config/sidekiq.yml'
-
 volumes:
   app-gems:
   app-postgres:
-  app-redis:
